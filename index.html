@@ -1,0 +1,279 @@
+<html lang="pt-BR">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>Régua Barsi 11% Auto</title>
+<style>
+:root{
+  --bg:#070b12;
+  --bg2:#0b1220;
+  --card:#111a29;
+  --card2:#0f172a;
+  --line:#1e2a3f;
+  --txt:#e6f0ff;
+  --muted:#8a9bb3;
+  --accent:#8b5cf6;
+  --accent2:#5b21b6;
+  --ok:#10b981;
+  --warn:#f59e0b;
+  --bad:#ef4444;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  background:
+    radial-gradient(1200px 800px at 80% -20%, #1e1b4b 0%, transparent 60%),
+    radial-gradient(1000px 600px at -10% 0%, #0e7490 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg), var(--bg2));
+  color:var(--txt);
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  position:sticky; top:0; z-index:10;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(180deg, rgba(7,11,18,.85), rgba(7,11,18,.6));
+  border-bottom:1px solid var(--line);
+}
+.wrap{max-width:1100px; margin:0 auto; padding:16px}
+.head{
+  display:flex; align-items:center; gap:14px; justify-content:space-between; flex-wrap:wrap;
+}
+.brand{
+  display:flex; align-items:center; gap:12px;
+}
+.logo{
+  width:40px; height:40px; border-radius:12px;
+  background: conic-gradient(from 210deg, #7c3aed, #06b6d4, #7c3aed);
+  box-shadow:0 6px 20px rgba(124,58,237,.35), inset 0 0 12px rgba(255,255,255,.15);
+}
+h1{font-size:20px; margin:0; letter-spacing:.3px}
+.sub{color:var(--muted); font-size:12px; margin-top:2px}
+.controls{
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  padding:12px 0 4px; width:100%;
+}
+.left{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.pill{
+  padding:8px 12px; border:1px solid var(--line); border-radius:999px;
+  background:rgba(17,26,41,.6); color:var(--muted); font-size:12px;
+}
+.btn{
+  appearance:none; border:1px solid #2a3752; background:#162135; color:#dbe7ff;
+  padding:12px 14px; border-radius:14px; font-weight:600; font-size:14px;
+  cursor:pointer; transition:.2s; box-shadow: var(--shadow);
+  touch-action:manipulation;
+}
+.btn:active{transform:translateY(1px)}
+.btn.primary{
+  background: linear-gradient(135deg, var(--accent), #4f46e5);
+  border-color: transparent; color:white;
+}
+.btn.ghost{background:transparent}
+.btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
+main.grid{
+  display:grid; gap:16px;
+  grid-template-columns: repeat(4, 1fr);
+  padding:16px 0 40px;
+}
+@media (max-width:1100px){ main.grid{grid-template-columns: repeat(2,1fr);} }
+@media (max-width:680px){ main.grid{grid-template-columns: 1fr;} }
+.card{
+  background: linear-gradient(180deg, #0f1828, #0c1422);
+  border:1px solid var(--line);
+  border-radius:22px; padding:16px;
+  box-shadow: var(--shadow);
+  position:relative; overflow:hidden;
+}
+.card:before{
+  content:""; position:absolute; inset:-1px; border-radius:22px;
+  background: linear-gradient(180deg, rgba(139,92,246,.25), transparent 40%);
+  pointer-events:none;
+}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;
+}
+.ticker{
+  font-size:22px; font-weight:800; letter-spacing:.5px;
+}
+.badge{
+  padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line);
+  background:#0b1424; color:#bcd1ff;
+}
+.badge.ok{background:rgba(16,185,129,.12); color:#7ff0c6; border-color:rgba(16,185,129,.3)}
+.badge.warn{background:rgba(245,158,11,.12); color:#ffd38a; border-color:rgba(245,158,11,.3)}
+.badge.bad{background:rgba(239,68,68,.12); color:#ffb4b4; border-color:rgba(239,68,68,.3)}
+.metrics{
+  display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;
+}
+.metric{
+  background: var(--card2); border:1px solid var(--line); border-radius:16px; padding:12px;
+}
+.metric label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px}
+.metric.val{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  font-size:18px; font-weight:700;
+}
+.iconbtn{
+  border:1px solid var(--line); background:#0b1424; color:#bcd1ff;
+  padding:6px 8px; border-radius:10px; font-size:12px; cursor:pointer;
+}
+.val small{font-size:12px; color:var(--muted); font-weight:600}
+.row{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+  font-size:13px; color:var(--muted);
+}
+.row strong{color:#d7e6ff}
+.levels{
+  display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-top:12px;
+}
+.level{
+  text-align:center; padding:10px 8px; border-radius:14px;
+  background:#0a1322; border:1px solid var(--line); color:#9ab0d0; font-size:12px;
+  opacity:.55; transition:.2s;
+}
+.level b{display:block; font-size:11px; letter-spacing:.4px; margin-bottom:4px; color:#c8d6f0}
+.level.active{
+  opacity:1; border-color:#5b4bf5; box-shadow:0 0 0 1px rgba(91,75,245,.5) inset, 0 6px 18px rgba(91,75,245,.18);
+  background: linear-gradient(180deg, rgba(91,75,245,.18), rgba(14,20,38,.2));
+  color:#e9e7ff;
+}
+.foot{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-top:12px; font-size:11px; color:var(--muted);
+}
+.src{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%}
+.hint{
+  margin-top:8px; font-size:12px; color:#a6b8d6; background:#0a1322; border:1px dashed var(--line);
+  padding:10px 12px; border-radius:12px;
+}
+footer{
+  border-top:1px solid var(--line); color:var(--muted); font-size:12px;
+  padding:24px 0 60px; text-align:center;
+}
+a{color:#a5b4fc; text-decoration:none}
+.manual{color:#93c5fd; font-size:11px; margin-left:6px}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+  <div class="head">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Régua Barsi 11% Auto</h1>
+        <div class="sub">ISAE4 • CMIG4 • BBSE3 • TAEE11 • ITSA4 • SAPR11 — Preço Teto = Dividendo 12m / 11%</div>
+      </div>
+    </div>
+  </div>
+    <div class="controls">
+      <div class="left">
+        <span id="lastUpdate" class="pill">Carregando…</span>
+        <span class="pill">Formato BR • Offline com cache</span>
+      </div>
+      <div class="left">
+        <button id="notifyBtn" class="btn small">Ativar Notificações</button>
+        <button id="clearBtn" class="btn small ghost">Limpar Cache</button>
+        <button id="updateBtn" class="btn primary">Atualizar Agora</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="cards" class="grid"></div>
+  <div class="hint">
+    <b>Como funciona:</b> busca preço em tempo real na brapi.dev. Dividendo = soma dos proventos em dinheiro dos últimos 12 meses. Se não achar, usa o valor salvo. Fórmula: <b>Teto = Dividendo / 0,11</b>. Toque em ✎ para editar manualmente (fica salvo no aparelho).
+  </div>
+</main>
+
+<footer>
+  App híbrido local. Não é recomendação de investimento. Dados: brapi.dev (com proxy de contingência).
+</footer>
+
+<script>
+const BRAPI_TOKEN = 'kCJxBKJi94qFHNWJpLQatk';
+const TICKERS = ['ISAE4', 'CMIG4', 'BBSE3', 'TAEE11', 'ITSA4', 'SAPR11'];
+const STORAGE_KEY = 'barsi11-v6';
+const DEFAULTS = {
+  ISAE4: { price: 28.20, dividend: 3.04 },
+  CMIG4: { price: 10.96, dividend: 1.49 },
+  BBSE3: { price: 39.17, dividend: 4.26 },
+  TAEE11: { price: 39.69, dividend: 2.96 },
+  ITSA4: { price: 13.55, dividend: 1.34 },
+  SAPR11: { price: 37.67, dividend: 1.96 }
+};
+
+let state = loadState();
+function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return {tickers:{}, lastFetch:null, lastSource:null}; const parsed = JSON.parse(raw); return {tickers:parsed.tickers||{}, lastFetch:parsed.lastFetch||null, lastSource:parsed.lastSource||null}; }catch{ return {tickers:{}, lastFetch:null, lastSource:null} } }
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }
+const fmtBRL = v => isFinite(v)? v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : '—';
+const fmtPct = v => isFinite(v)? (v*100).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2})+'%' : '—';
+const fmtDate = ts => ts? new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+function getData(t){ const s = state.tickers[t] || {}; const base = DEFAULTS[t]; const price = (s.manualPrice?? s.price?? base.price); const dividend = (s.manualDividend?? s.dividend?? base.dividend); return {...s, price, dividend}; }
+function calc(price, dividend){ const teto = dividend / 0.11; const dy = dividend / price; const distPct = (price / teto - 1); const noPadrao = price <= teto; const faltando = price > teto && price <= teto*1.10; const melhor = price >= teto*0.90 && price <= teto*0.95; const excelente = price < teto*0.90; let status='ACIMA', cls='bad'; if(excelente){ status='EXCELENTE'; cls='ok'; } else if(melhor){ status='MELHOR 5–10%'; cls='ok'; } else if(noPadrao){ status='NO PADRÃO'; cls='ok'; } else if(price <= teto*1.05){ status='PRÓXIMO'; cls='warn'; } else if(faltando){ status='FALTANDO 5–10%'; cls='warn'; } return {teto, dy, distPct, noPadrao, faltando, melhor, status, cls}; }
+
+function render(){ const wrap = document.getElementById('cards'); wrap.innerHTML = TICKERS.map(t=>{ const d = getData(t); const c = calc(d.price, d.dividend); const manual = (state.tickers[t]?.manualPrice!=null || state.tickers[t]?.manualDividend!=null); const distTxt = c.distPct>=0? `+${fmtPct(c.distPct)} acima` : `${fmtPct(c.distPct)} abaixo`; return `<article class="card" data-ticker="${t}"><div class="card-head"><div class="ticker">${t} ${manual?'<span class="manual">(manual)</span>':''}</div><span class="badge ${c.cls}">${c.status}</span></div><div class="metrics"><div class="metric"><label>Preço Atual</label><div class="val"><span>${fmtBRL(d.price)}</span><button class="iconbtn" data-edit="price" title="Editar preço">✎</button></div><small>Fonte: ${d.source||'cache'}</small></div><div class="metric"><label>Dividendo 12m</label><div class="val"><span>${fmtBRL(d.dividend)}</span><button class="iconbtn" data-edit="dividend" title="Editar dividendo">✎</button></div><small>DY: ${fmtPct(c.dy)}</small></div><div class="metric"><label>Preço Teto (11%)</label><div class="val"><span>${fmtBRL(c.teto)}</span></div><small>Div / 0,11</small></div><div class="metric"><label>Distância</label><div class="val"><span>${distTxt}</span></div><small>vs. teto</small></div></div><div class="levels"><div class="level ${c.melhor||d.price<c.teto*0.9?'active':''}"><b>MELHOR</b>5–10%</div><div class="level ${c.noPadrao?'active':''}"><b>NO PADRÃO</b>≤ teto</div><div class="level ${c.faltando?'active':''}"><b>FALTANDO</b>5–10%</div></div><div class="row"><div>Atualizado: <strong>${fmtDate(d.updatedAt)}</strong></div><div style="display:flex; gap:6px">${manual?`<button class="btn small ghost" data-reset="${t}">Limpar manual</button>`:''}<button class="btn small ghost" data-refresh="${t}">Recarregar</button></div></div><div class="foot"><div class="src">Origem: ${d.source||'—'}</div><div>ID: ${t}</div></div></article>`; }).join(''); const lu = document.getElementById('lastUpdate'); if(state.lastFetch){ const tm = new Date(state.lastFetch).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); lu.textContent = `Última atualização: ${tm} — fonte: ${state.lastSource||'brapi'}`; }else{ lu.textContent = 'Usando cache — toque em Atualizar'; } const nb = document.getElementById('notifyBtn'); if('Notification' in window){ if(Notification.permission==='granted' && localStorage.getItem('barsi-notify')==='1'){ nb.textContent='Notificações Ativas ✓'; }else{ nb.textContent='Ativar Notificações'; } }else{ nb.disabled=true; nb.textContent='Notificações indisponíveis'; } }
+
+async function fetchWithTimeout(url, ms=9000){ const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), ms); try{ const r = await fetch(url, {signal:ctrl.signal, cache:'no-store'}); clearTimeout(t); return r; }catch(e){ clearTimeout(t); throw e } }
+
+async function tryFetchBatch(){
+  const tickers = TICKERS.join(',');
+  const base = `https://brapi.dev/api/quote/${tickers}?range=1d&interval=1d&fundamental=true&dividends=true&token=${BRAPI_TOKEN}`;
+  try{
+    const res = await fetchWithTimeout(base, 9000);
+    if(!res.ok) throw new Error('brapi');
+    const json = await res.json();
+    return {json, source:'brapi'};
+  }catch(e){
+    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(base)}`;
+    const res2 = await fetchWithTimeout(proxy, 10000);
+    if(!res2.ok) throw new Error('proxy');
+    const json = await res2.json();
+    return {json, source:'proxy'};
+  }
+}
+
+function processBatch(json, source){ const results = json?.results || []; let ok = 0; const now = Date.now(); const yearAgo = now - 365*24*3600*1000; results.forEach(r=>{ const t = (r.symbol||'').toUpperCase(); if(!TICKERS.includes(t)) return; const price = Number(r.regularMarketPrice); if(!isFinite(price)) return; let dividend = 0; const cash = r.dividendsData?.cashDividends || []; if(Array.isArray(cash)){ dividend = cash.filter(d=>{ const ts = new Date(d.paymentDate || d.exDate || d.approvedOn).getTime(); return ts >= yearAgo && ts <= now; }).reduce((s,d)=> s + (Number(d.rate)||0), 0); } const prev = state.tickers[t] || {}; const fallback = prev.dividend?? DEFAULTS[t].dividend; if(!dividend || dividend<=0) dividend = fallback; state.tickers[t] = {...prev, price, dividend, source, updatedAt: Date.now() }; ok++; }); if(ok>0){ state.lastFetch = Date.now(); state.lastSource = source==='proxy'? 'brapi (proxy)' : 'brapi'; return true; } return false; }
+
+async function updateAll(){ const btn = document.getElementById('updateBtn'); btn.disabled = true; btn.textContent = 'Atualizando…'; let success = false; try{ const {json, source} = await tryFetchBatch(); success = processBatch(json, source); }catch(e){ console.warn('Falha ao buscar', e); } TICKERS.forEach(t=>{ if(!state.tickers[t]?.price){ state.tickers[t] = {...DEFAULTS[t], source:'cache', updatedAt:null,...(state.tickers[t]||{})}; } }); if(!success &&!state.lastSource){ state.lastSource = 'cache'; } saveState(); render(); btn.disabled = false; btn.textContent = 'Atualizar Agora'; if(success) notifyCheck(); }
+
+function notifyCheck(){ if(localStorage.getItem('barsi-notify')!=='1') return; if(!('Notification' in window) || Notification.permission!=='granted') return; TICKERS.forEach(t=>{ const d = getData(t); const c = calc(d.price, d.dividend); if(c.noPadrao || c.melhor || d.price < c.teto*0.9){ try{ new Notification(`${t} — ${c.status}`, { body: `Preço ${fmtBRL(d.price)} | Teto ${fmtBRL(c.teto)} | DY ${fmtPct(c.dy)}`, tag: 'barsi-'+t }); }catch{} } }); }
+
+document.addEventListener('click', async (e)=>{ const eb = e.target.closest('[data-edit]'); if(eb){ const card = eb.closest('.card'); const t = card.dataset.ticker; const type = eb.dataset.edit; const cur = getData(t); const valStr = type==='price'? cur.price.toFixed(2).replace('.',',') : cur.dividend.toFixed(2).replace('.',','); const ans = prompt(type==='price'? `Preço manual para ${t} (ex: 24,50)` : `Dividendo 12m manual para ${t} (ex: 2,80)`, valStr); if(ans===null) return; const num = parseFloat(ans.replace(/\./g,'').replace(',','.')); if(!isFinite(num)) return alert('Valor inválido'); state.tickers[t] = state.tickers[t]||{}; if(type==='price') state.tickers[t].manualPrice = num; else state.tickers[t].manualDividend = num; saveState(); render(); } const rb = e.target.closest('[data-reset]'); if(rb){ const t = rb.dataset.reset; if(state.tickers[t]){ delete state.tickers[t].manualPrice; delete state.tickers[t].manualDividend; } saveState(); render(); } const rf = e.target.closest('[data-refresh]'); if(rf){ rf.disabled=true; rf.textContent='...'; await updateAll(); } });
+document.getElementById('updateBtn').onclick = ()=> updateAll();
+document.getElementById('clearBtn').onclick = ()=>{ if(confirm('Limpar cache local e recarregar com valores padrão?')){ localStorage.removeItem(STORAGE_KEY); location.reload(); } };
+document.getElementById('notifyBtn').onclick = async ()=>{ if(!('Notification' in window)) return alert('Seu navegador não suporta notificações.'); const p = await Notification.requestPermission(); if(p==='granted'){ localStorage.setItem('barsi-notify','1'); render(); new Notification('Régua Barsi 11%', {body:'Notificações ativadas. Avisaremos quando atingir o preço teto.'}); }else{ localStorage.removeItem('barsi-notify'); alert('Permissão negada.'); } };
+
+render(); updateAll();
+
+if('serviceWorker' in navigator){ try{ const sw = ` const CACHE='barsi11-v6'; self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./']))); self.skipWaiting(); }); self.addEventListener('activate',e=>{ e.waitUntil(self.clients.claim()); }); self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request).then(resp=>{ const copy=resp.clone(); caches.open(CACHE).then(c=>c.put(e.request, copy)); return resp; }).catch(()=>caches.match('./')))); }); `; const blob = new Blob([sw], {type:'application/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(blob)); }catch{} }
+</script>
+</body>
+</html>
