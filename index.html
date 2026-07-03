@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>Régua Barsi 11% Auto v8-alertas-escala</title>
+<style>
+:root{ --bg:#070b12; --bg2:#0b1220; --card:#111a29; --card2:#0f172a; --line:#1e2a3f; --txt:#e6f0ff; --muted:#8a9bb3; --accent:#8b5cf6; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --shadow:0 10px 30px rgba(0,0,0,.35);}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:radial-gradient(1200px 800px at 80% -20%, #1e1b4b 0%, transparent 60%),radial-gradient(1000px 600px at -10% 0%, #0e7490 0%, transparent 50%),linear-gradient(180deg, var(--bg), var(--bg2));color:var(--txt);}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:linear-gradient(180deg, rgba(7,11,18,.85), rgba(7,11,18,.6));border-bottom:1px solid var(--line);}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.head{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.logo{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 210deg, #7c3aed, #06b6d4, #7c3aed);}
+h1{font-size:20px;margin:0}
+.sub{color:var(--muted);font-size:12px;margin-top:2px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 0 4px;width:100%;}
+.left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(17,26,41,.6);color:var(--muted);font-size:12px;}
+.btn{appearance:none;border:1px solid #2a3752;background:#162135;color:#dbe7ff;padding:12px 14px;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;}
+.btn.primary{background:linear-gradient(135deg, var(--accent), #4f46e5);border-color:transparent;color:white;}
+.btn.ghost{background:transparent}
+.btn.small{padding:8px 10px;font-size:12px;border-radius:10px}
+main.grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr);padding:16px 0 40px;}
+@media (max-width:1100px){main.grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:680px){main.grid{grid-template-columns:1fr;}}
+.card{background:linear-gradient(180deg, #0f1828, #0c1422);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.ticker{font-size:22px;font-weight:800;}
+.badge{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);background:#0b1424;color:#bcd1ff;}
+.badge.ok{background:rgba(16,185,129,.12);color:#7ff0c6;border-color:rgba(16,185,129,.3)}
+.badge.warn{background:rgba(245,158,11,.12);color:#ffd38a;border-color:rgba(245,158,11,.3)}
+.badge.bad{background:rgba(239,68,68,.12);color:#ffb4b4;border-color:rgba(239,68,68,.3)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+.metric{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px;}
+.metric label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.metric.val{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:18px;font-weight:700;}
+.iconbtn{border:1px solid var(--line);background:#0b1424;color:#bcd1ff;padding:6px 8px;border-radius:10px;font-size:12px;cursor:pointer;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.level{text-align:center;padding:10px 8px;border-radius:14px;background:#0a1322;border:1px solid var(--line);color:#9ab0d0;font-size:12px;opacity:.55}
+.level.active{opacity:1;border-color:#5b4bf5;box-shadow:0 0 0 1px rgba(91,75,245,.5) inset;color:#e9e7ff;}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;font-size:11px;color:var(--muted);}
+.hint{margin-top:8px;font-size:12px;color:#a6b8d6;background:#0a1322;border:1px dashed var(--line);padding:10px 12px;border-radius:12px;}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:12px;padding:24px 0 60px;text-align:center;}
+.manual{color:#93c5fd;font-size:11px;margin-left:6px}
+.thermo{margin-top:12px}
+.thermo-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
+
+.thermo-track{position:relative;height:10px;border-radius:999px;background:#0a1322;border:1px solid var(--line);}
+.thermo-fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444)}
+.thermo-pointer{position:absolute;top:-5px;width:5px;height:20px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(0,0,0,.6);transform:translateX(-50%);z-index:2}
+.thermo-marker{position:absolute;top:-4px;width:5px;height:18px;background:#000;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.5);z-index:3;cursor:pointer;transform:translateX(-50%);}
+.thermo-marker::after{content:attr(data-label);position:absolute;top:20px;left:50%;transform:translateX(-50%) translateY(-4px);font-size:9px;color:#000;background:#fff;padding:1px 4px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s, transform .15s;}
+.thermo-marker.show::after{opacity:.95;transform:translateX(-50%) translateY(0);}
+
+.thermo-scale{display:flex;justify-content:space-between;font-size:10px;color:#6b7f9e;margin-top:4px}
+.exdate{color:#93c5fd}
+.exdate.soon{color:#ffd38a;font-weight:700}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b1220">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<header><div class="wrap">
+  <div class="head"><div class="brand"><div class="logo"></div><div>
+    <h1>Régua Barsi 11% Auto</h1>
+    <div class="sub">ISAE4 • CMIG4 • BBSE3 • TAEE11 • ITSA4 • SAPR11 — Preço Teto = Dividendo 12m / 11%</div>
+  </div></div></div>
+  <div class="controls">
+    <div class="left">
+      <span id="lastUpdate" class="pill">Carregando…</span>
+      <span class="pill">100% grátis • sem chave</span>
+    </div>
+    <div class="left">
+      <button id="notifyBtn" class="btn small">Ativar Notificações</button>
+      <button id="clearBtn" class="btn small ghost">Limpar Cache</button>
+      <button id="updateBtn" class="btn primary">Atualizar Agora</button>
+    </div>
+  </div>
+</div></header>
+<main class="wrap">
+  <div id="cards" class="grid"></div>
+  <div class="hint"><b>Fontes:</b> 1º Yahoo, 2º Stooq, 3º B3Api, 4º BrasilAPI. Falhou numa, entra na outra automático. ✎ para editar manual.</div>
+</main>
+<footer>App híbrido local. Não é recomendação de investimento.</footer>
+<script>
+const TICKERS = ['ISAE4','CMIG4','BBSE3','TAEE11','ITSA4','SAPR11'];
+const STORAGE_KEY = 'barsi11-v7_8_std';
+const DEFAULTS = {
+  ISAE4:{price:28.20,dividend:3.04, exDate:null},
+  CMIG4:{price:10.96,dividend:1.49, exDate:null},
+  BBSE3:{price:39.17,dividend:4.26, exDate:'2026-07-31'},
+  TAEE11:{price:39.69,dividend:2.96, exDate:null},
+  ITSA4:{price:13.55,dividend:1.34, exDate:null},
+  SAPR11:{price:37.67,dividend:1.96, exDate:null}
+};
+let state = loadState();
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return{tickers:{},lastFetch:null,lastSource:null};const p=JSON.parse(raw);return{tickers:p.tickers||{},lastFetch:p.lastFetch||null,lastSource:p.lastSource||null}}catch{return{tickers:{},lastFetch:null,lastSource:null}}}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+const fmtBRL=v=>isFinite(v)?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'—';
+const fmtPct=v=>isFinite(v)?(v*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%':'—';
+const fmtDate=ts=>ts?new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+function fmtExDate(s){ if(!s) return '—'; const d=new Date(s+'T12:00:00'); return d.toLocaleDateString('pt-BR') }
+function daysToEx(s){ if(!s) return null; const d=new Date(s+'T12:00:00'); return Math.ceil((d - new Date())/86400000) }
+function getData(t){const s=state.tickers[t]||{};const b=DEFAULTS[t];const price=(s.manualPrice??s.price??b.price);const dividend=(s.manualDividend??s.dividend??b.dividend);const exDate = s.exDate?? b.exDate?? null;return{...s,price,dividend,exDate};}
+function calc(price,dividend){const teto=dividend/0.11;const dy=dividend/price;const distPct=(price/teto-1);const noPadrao=price<=teto;const faltando=price>teto&&price<=teto*1.10;const melhor=price>=teto*0.90&&price<=teto*0.95;const excelente=price<teto*0.90;let status='ACIMA',cls='bad';if(excelente){status='EXCELENTE';cls='ok';}else if(melhor){status='MELHOR 5–10%';cls='ok';}else if(noPadrao){status='NO PADRÃO';cls='ok';}else if(price<=teto*1.05){status='PRÓXIMO';cls='warn';}else if(faltando){status='FALTANDO 5–10%';cls='warn';}return{teto,dy,distPct,noPadrao,faltando,melhor,status,cls};}
+function render(){const wrap=document.getElementById('cards');wrap.innerHTML=TICKERS.map(t=>{const d=getData(t);const c=calc(d.price,d.dividend);const manual=(state.tickers[t]?.manualPrice!=null||state.tickers[t]?.manualDividend!=null);const distTxt=c.distPct>=0?`+${fmtPct(c.distPct)} acima`:`${fmtPct(c.distPct)} abaixo`;
+const ratio = d.price / c.teto;
+const pctRaw = ratio*100;
+const pct = Math.max(0, Math.min(130, pctRaw));
+const thermoPos = Math.max(0, Math.min(100, (ratio - 0.90) / 0.20 * 100));
+const fillLeft = thermoPos;
+const days = daysToEx(d.exDate);
+const exSoon = days!== null && days >=0 && days <=14;
+const exLabel = d.exDate? fmtExDate(d.exDate) + (days!==null? (days>=0? ` · ${days}d` : '') : '') : '—';
+return`<article class="card" data-ticker="${t}"><div class="card-head"><div class="ticker">${t} ${manual?'<span class="manual">(manual)</span>':''}</div><span class="badge ${c.cls}">${c.status}</span></div><div class="metrics"><div class="metric"><label>Preço Atual</label><div class="val"><span>${fmtBRL(d.price)}</span><button class="iconbtn" data-edit="price">✎</button></div><small>Fonte: ${d.source||'cache'}</small></div><div class="metric"><label>Dividendo 12m</label><div class="val"><span>${fmtBRL(d.dividend)}</span><button class="iconbtn" data-edit="dividend">✎</button></div><small>DY: ${fmtPct(c.dy)}</small></div><div class="metric"><label>Preço Teto (11%)</label><div class="val"><span>${fmtBRL(c.teto)}</span></div><small>Div / 0,11</small></div><div class="metric"><label>Distância</label><div class="val"><span>${distTxt}</span></div><small>vs. teto</small></div></div>
+<div class="thermo"><div class="thermo-label"><span>Distância do teto</span><span>${pctRaw.toFixed(0)}%</span></div>
+
+<div class="thermo-track">
+  <div class="thermo-fill" style="width:100%"></div>
+  <div class="thermo-pointer" style="left:${thermoPos}%"></div>
+  <div class="thermo-marker" style="left:50%" data-label="No padrão" title="No padrão (teto)"></div>
+  <div class="thermo-marker" style="left:75%" data-label="Próximo" title="Próximo do padrão (+5%)"></div>
+  <div class="thermo-marker" style="left:100%" data-label="Acima" title="Acima do padrão (+10%)"></div>
+</div>
+
+<div class="thermo-scale"><span>90% Excelente</span><span>100% Teto</span><span>110%</span></div>
+<div class="levels"><div class="level ${c.melhor||d.price<c.teto*0.9?'active':''}"><b>MELHOR</b>5–10%</div><div class="level ${c.noPadrao?'active':''}"><b>NO PADRÃO</b>≤ teto</div><div class="level ${c.faltando?'active':''}"><b>FALTANDO</b>5–10%</div></div><div class="row"><div>Atualizado: <strong>${fmtDate(d.updatedAt)}</strong></div><div style="display:flex;gap:6px">${manual?`<button class="btn small ghost" data-reset="${t}">Limpar manual</button>`:''}<button class="btn small ghost" data-refresh="${t}">Recarregar</button></div></div><div class="foot"><div class="exdate ${exSoon?'soon':''}">Próx. data-com: ${exLabel}</div><div class="src">Origem: ${d.source||'—'}</div></div></article>`}).join('');const lu=document.getElementById('lastUpdate');if(state.lastFetch){const tm=new Date(state.lastFetch).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});lu.textContent=`Última atualização: ${tm} — ${state.lastSource||'multi'}`;}else{lu.textContent='Usando cache — toque em Atualizar';}const nb=document.getElementById('notifyBtn');if('Notification' in window){if(Notification.permission==='granted'&&localStorage.getItem('barsi-notify')==='1'){nb.textContent='Notificações Ativas ✓';}else{nb.textContent='Ativar Notificações';}}else{nb.disabled=true;nb.textContent='Notificações indisponíveis';}}
+async function fetchWithTimeout(url,ms=9000){const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms);try{const r=await fetch(url,{signal:ctrl.signal,cache:'no-store'});clearTimeout(t);return r;}catch(e){clearTimeout(t);throw e}}
+async function fetchYahoo(ticker){const y = ticker + '.SA';const proxies = ['https://api.allorigins.win/raw?url=','https://corsproxy.io/?'];for(const p of proxies){try{const res = await fetchWithTimeout(p + encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${y}`), 7000);if(!res.ok) continue;const j = await res.json();const price = j?.chart?.result?.[0]?.meta?.regularMarketPrice;if(price && isFinite(price)) return {price: Number(price), source: 'yahoo'};}catch{}}throw new Error('yahoo fail');}
+async function fetchStooq(ticker){try{const code = ticker.toLowerCase() + '.sa';const res = await fetchWithTimeout(`https://stooq.com/q/l/?s=${code}&f=sd2t2ohlcv&h&e=csv`, 6000);const txt = await res.text();const line = txt.trim().split('\n')[1];if(line){const close = parseFloat(line.split(',')[6]);if(isFinite(close)) return {price: close, source: 'stooq'};}}catch{}throw new Error('stooq fail');}
+async function fetchB3Api(ticker){try{const res = await fetchWithTimeout(`https://b3api.vercel.app/api/Assets/${ticker}`, 6000);if(!res.ok) throw new Error();const j = await res.json();const price = j?.price?? j?.currentPrice?? null;if(price && isFinite(price)) return {price: Number(price), source: 'b3api'};}catch{}throw new Error('b3api fail');}
+async function fetchBrasilAPI(ticker){try{const res = await fetchWithTimeout(`https://brasilapi.com.br/api/quote/v1/${ticker}`, 6000);if(!res.ok) throw new Error();const j = await res.json();const price = j.regularMarketPrice?? j.price?? null;if(price && isFinite(price)) return {price: Number(price), source: 'brasilapi'};}catch{}throw new Error('brasilapi fail');}
+async function getPrice(ticker){const chain = [fetchYahoo, fetchStooq, fetchB3Api, fetchBrasilAPI];for(const fn of chain){try{const r = await fn(ticker);if(r && r.price) return r;}catch{}}return null;}
+async function updateAll(){const btn=document.getElementById('updateBtn');btn.disabled=true; btn.textContent='Atualizando…';const results = await Promise.allSettled(TICKERS.map(t => getPrice(t)));let ok = 0;results.forEach((r,i)=>{if(r.status==='fulfilled' && r.value && r.value.price){const t = TICKERS[i];const prev = state.tickers[t] || {};const dividend = prev.dividend?? prev.manualDividend?? DEFAULTS[t].dividend;state.tickers[t] = {...prev, price: r.value.price, dividend, source: r.value.source, updatedAt: Date.now()};ok++;}});if(ok>0){ state.lastFetch=Date.now(); state.lastSource='multi'; }saveState(); render();btn.disabled=false; btn.textContent='Atualizar Agora';if(ok>0) notifyCheck();}
+
+function playBeep(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type='sine'; o.frequency.value=880;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime+0.01);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.25);
+    o.stop(ctx.currentTime+0.26);
+  }catch(e){}
+}
+function notifyCheck(){if(localStorage.getItem('barsi-notify')!=='1')return;if(!('Notification'in window)||Notification.permission!=='granted')return;TICKERS.forEach(t=>{const d=getData(t);const c=calc(d.price,d.dividend);const key='alert-'+t;const last=localStorage.getItem(key);const now=c.status;if((c.noPadrao||c.melhor||d.price<c.teto*0.9) && last!==now){try{playBeep();new Notification(`${t} — ${c.status}`,{body:`Preço ${fmtBRL(d.price)} | Teto ${fmtBRL(c.teto)} | DY ${fmtPct(c.dy)}`,tag:'barsi-'+t});localStorage.setItem(key,now);}catch{}}});}
+
+document.addEventListener('click',async e=>{const eb=e.target.closest('[data-edit]');if(eb){const card=eb.closest('.card');const t=card.dataset.ticker;const type=eb.dataset.edit;const cur=getData(t);const valStr=type==='price'?cur.price.toFixed(2).replace('.',','):cur.dividend.toFixed(2).replace('.',',');const ans=prompt(type==='price'?`Preço manual para ${t}`:`Dividendo 12m manual para ${t}`,valStr);if(ans===null)return;const num=parseFloat(ans.replace(/\./g,'').replace(',','.'));if(!isFinite(num))return alert('Valor inválido');state.tickers[t]=state.tickers[t]||{};if(type==='price')state.tickers[t].manualPrice=num;else state.tickers[t].manualDividend=num;saveState();render();notifyCheck();}const rb=e.target.closest('[data-reset]');if(rb){const t=rb.dataset.reset;if(state.tickers[t]){delete state.tickers[t].manualPrice;delete state.tickers[t].manualDividend;}saveState();render();}const rf=e.target.closest('[data-refresh]');if(rf){rf.disabled=true;rf.textContent='...';await updateAll();}});
+document.getElementById('updateBtn').onclick=()=>updateAll();
+document.getElementById('clearBtn').onclick=()=>{if(confirm('Limpar cache local?')){localStorage.removeItem(STORAGE_KEY);location.reload();}};
+document.getElementById('notifyBtn').onclick=async()=>{if(!('Notification'in window))return alert('Sem suporte.');const p=await Notification.requestPermission();if(p==='granted'){localStorage.setItem('barsi-notify','1');render();}else{localStorage.removeItem('barsi-notify');}};
+render();updateAll();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js'));
+}
+</script>
+</body>
+</html>
