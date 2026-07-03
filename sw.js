@@ -1,4 +1,4 @@
-const CACHE = 'barsi-v7_8-1';
+const CACHE = 'regua-barsi-v8';
 const ASSETS = [
   './',
   './index.html',
