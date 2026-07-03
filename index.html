@@ -1,11 +1,31 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0f14">
-<title>Régua Barsi 11% Auto v7.9-alerta</title>
+<title>Régua Barsi 11% Auto v7.8</title>
 <style>
 :root{ --bg:#070b12; --bg2:#0b1220; --card:#111a29; --card2:#0f172a; --line:#1e2a3f; --txt:#e6f0ff; --muted:#8a9bb3; --accent:#8b5cf6; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --shadow:0 10px 30px rgba(0,0,0,.35);}
 *{box-sizing:border-box}html,body{height:100%}
@@ -47,6 +67,7 @@ main.grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr);padding:16px
 .hint{margin-top:8px;font-size:12px;color:#a6b8d6;background:#0a1322;border:1px dashed var(--line);padding:10px 12px;border-radius:12px;}
 footer{border-top:1px solid var(--line);color:var(--muted);font-size:12px;padding:24px 0 60px;text-align:center;}
 .manual{color:#93c5fd;font-size:11px;margin-left:6px}
+/* --- ADIÇÃO: termômetro --- */
 .thermo{margin-top:12px}
 .thermo-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
 .thermo-track{position:relative;height:10px;border-radius:999px;background:#0a1322;border:1px solid var(--line);overflow:hidden;}
@@ -103,45 +124,100 @@ const fmtPct=v=>isFinite(v)?(v*100).toLocaleString('pt-BR',{minimumFractionDigit
 const fmtDate=ts=>ts?new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 function fmtExDate(s){ if(!s) return '—'; const d=new Date(s+'T12:00:00'); return d.toLocaleDateString('pt-BR') }
 function daysToEx(s){ if(!s) return null; const d=new Date(s+'T12:00:00'); return Math.ceil((d - new Date())/86400000) }
-function getData(t){const s=state.tickers[t]||{};const b=DEFAULTS[t];const price=(s.manualPrice??s.price??b.price);const dividend=(s.manualDividend??s.dividend??b.dividend);const exDate = s.exDate?? b.exDate?? null;return{...s,price,dividend,exDate};}
+function getData(t){const s=state.tickers[t]||{};const b=DEFAULTS[t];const price=(s.manualPrice??s.price??b.price);const dividend=(s.manualDividend??s.dividend??b.dividend);const exDate = s.exDate ?? b.exDate ?? null;return{...s,price,dividend,exDate};}
 function calc(price,dividend){const teto=dividend/0.11;const dy=dividend/price;const distPct=(price/teto-1);const noPadrao=price<=teto;const faltando=price>teto&&price<=teto*1.10;const melhor=price>=teto*0.90&&price<=teto*0.95;const excelente=price<teto*0.90;let status='ACIMA',cls='bad';if(excelente){status='EXCELENTE';cls='ok';}else if(melhor){status='MELHOR 5–10%';cls='ok';}else if(noPadrao){status='NO PADRÃO';cls='ok';}else if(price<=teto*1.05){status='PRÓXIMO';cls='warn';}else if(faltando){status='FALTANDO 5–10%';cls='warn';}return{teto,dy,distPct,noPadrao,faltando,melhor,status,cls};}
 function render(){const wrap=document.getElementById('cards');wrap.innerHTML=TICKERS.map(t=>{const d=getData(t);const c=calc(d.price,d.dividend);const manual=(state.tickers[t]?.manualPrice!=null||state.tickers[t]?.manualDividend!=null);const distTxt=c.distPct>=0?`+${fmtPct(c.distPct)} acima`:`${fmtPct(c.distPct)} abaixo`;
 const ratio = d.price / c.teto;
 const pctRaw = ratio*100;
 const pct = Math.max(0, Math.min(130, pctRaw));
-const thermoPos = Math.max(0, Math.min(100, (ratio - 0.90) / 0.20 * 100));
+// mapeia 90%-110% do teto para 0-100% da barra
+const thermoPos = Math.max(0, Math.min(100, pctRaw * 100 / 110));
 const fillLeft = thermoPos;
 const days = daysToEx(d.exDate);
-const exSoon = days!== null && days >=0 && days <=14;
-const exLabel = d.exDate? fmtExDate(d.exDate) + (days!==null? (days>=0? ` · ${days}d` : '') : '') : '—';
+const exSoon = days !== null && days >=0 && days <=14;
+const exLabel = d.exDate ? fmtExDate(d.exDate) + (days!==null ? (days>=0 ? ` · ${days}d` : '') : '') : '—';
 return`<article class="card" data-ticker="${t}"><div class="card-head"><div class="ticker">${t} ${manual?'<span class="manual">(manual)</span>':''}</div><span class="badge ${c.cls}">${c.status}</span></div><div class="metrics"><div class="metric"><label>Preço Atual</label><div class="val"><span>${fmtBRL(d.price)}</span><button class="iconbtn" data-edit="price">✎</button></div><small>Fonte: ${d.source||'cache'}</small></div><div class="metric"><label>Dividendo 12m</label><div class="val"><span>${fmtBRL(d.dividend)}</span><button class="iconbtn" data-edit="dividend">✎</button></div><small>DY: ${fmtPct(c.dy)}</small></div><div class="metric"><label>Preço Teto (11%)</label><div class="val"><span>${fmtBRL(c.teto)}</span></div><small>Div / 0,11</small></div><div class="metric"><label>Distância</label><div class="val"><span>${distTxt}</span></div><small>vs. teto</small></div></div>
 <div class="thermo"><div class="thermo-label"><span>Distância do teto</span><span>${pctRaw.toFixed(0)}%</span></div><div class="thermo-track"><div class="thermo-fill" style="width:${fillLeft}%"></div><div class="thermo-pointer" style="left:${thermoPos}%"></div><div class="thermo-dot" style="left:0%"></div><div class="thermo-dot" style="left:50%"></div><div class="thermo-dot" style="left:100%"></div></div><div class="thermo-scale"><span>90% Excelente</span><span>100% Teto</span><span>110%</span></div></div>
 <div class="levels"><div class="level ${c.melhor||d.price<c.teto*0.9?'active':''}"><b>MELHOR</b>5–10%</div><div class="level ${c.noPadrao?'active':''}"><b>NO PADRÃO</b>≤ teto</div><div class="level ${c.faltando?'active':''}"><b>FALTANDO</b>5–10%</div></div><div class="row"><div>Atualizado: <strong>${fmtDate(d.updatedAt)}</strong></div><div style="display:flex;gap:6px">${manual?`<button class="btn small ghost" data-reset="${t}">Limpar manual</button>`:''}<button class="btn small ghost" data-refresh="${t}">Recarregar</button></div></div><div class="foot"><div class="exdate ${exSoon?'soon':''}">Próx. data-com: ${exLabel}</div><div class="src">Origem: ${d.source||'—'}</div></div></article>`}).join('');const lu=document.getElementById('lastUpdate');if(state.lastFetch){const tm=new Date(state.lastFetch).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});lu.textContent=`Última atualização: ${tm} — ${state.lastSource||'multi'}`;}else{lu.textContent='Usando cache — toque em Atualizar';}const nb=document.getElementById('notifyBtn');if('Notification' in window){if(Notification.permission==='granted'&&localStorage.getItem('barsi-notify')==='1'){nb.textContent='Notificações Ativas ✓';}else{nb.textContent='Ativar Notificações';}}else{nb.disabled=true;nb.textContent='Notificações indisponíveis';}}
 async function fetchWithTimeout(url,ms=9000){const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms);try{const r=await fetch(url,{signal:ctrl.signal,cache:'no-store'});clearTimeout(t);return r;}catch(e){clearTimeout(t);throw e}}
-async function fetchYahoo(ticker){const y = ticker + '.SA';const proxies = ['https://api.allorigins.win/raw?url=','https://corsproxy.io/?'];for(const p of proxies){try{const res = await fetchWithTimeout(p + encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${y}`), 7000);if(!res.ok) continue;const j = await res.json();const price = j?.chart?.result?.[0]?.meta?.regularMarketPrice;if(price && isFinite(price)) return {price: Number(price), source: 'yahoo'};}catch{}}throw new Error('yahoo fail');}
-async function fetchStooq(ticker){try{const code = ticker.toLowerCase() + '.sa';const res = await fetchWithTimeout(`https://stooq.com/q/l/?s=${code}&f=sd2t2ohlcv&h&e=csv`, 6000);const txt = await res.text();const line = txt.trim().split('\n')[1];if(line){const close = parseFloat(line.split(',')[6]);if(isFinite(close)) return {price: close, source: 'stooq'};}}catch{}throw new Error('stooq fail');}
-async function fetchB3Api(ticker){try{const res = await fetchWithTimeout(`https://b3api.vercel.app/api/Assets/${ticker}`, 6000);if(!res.ok) throw new Error();const j = await res.json();const price = j?.price?? j?.currentPrice?? null;if(price && isFinite(price)) return {price: Number(price), source: 'b3api'};}catch{}throw new Error('b3api fail');}
-async function fetchBrasilAPI(ticker){try{const res = await fetchWithTimeout(`https://brasilapi.com.br/api/quote/v1/${ticker}`, 6000);if(!res.ok) throw new Error();const j = await res.json();const price = j.regularMarketPrice?? j.price?? null;if(price && isFinite(price)) return {price: Number(price), source: 'brasilapi'};}catch{}throw new Error('brasilapi fail');}
-async function getPrice(ticker){const chain = [fetchYahoo, fetchStooq, fetchB3Api, fetchBrasilAPI];for(const fn of chain){try{const r = await fn(ticker);if(r && r.price) return r;}catch{}}return null;}
-async function updateAll(){const btn=document.getElementById('updateBtn');btn.disabled=true; btn.textContent='Atualizando…';const results = await Promise.allSettled(TICKERS.map(t => getPrice(t)));let ok = 0;results.forEach((r,i)=>{if(r.status==='fulfilled' && r.value && r.value.price){const t = TICKERS[i];const prev = state.tickers[t] || {};const dividend = prev.dividend?? prev.manualDividend?? DEFAULTS[t].dividend;state.tickers[t] = {...prev, price: r.value.price, dividend, source: r.value.source, updatedAt: Date.now()};ok++;}});if(ok>0){ state.lastFetch=Date.now(); state.lastSource='multi'; }saveState(); render();btn.disabled=false; btn.textContent='Atualizar Agora';if(ok>0) notifyCheck();}
-
-function playBeep(){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type='sine'; o.frequency.value=880;
-    o.connect(g); g.connect(ctx.destination);
-    g.gain.setValueAtTime(0.001, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime+0.01);
-    o.start();
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.25);
-    o.stop(ctx.currentTime+0.26);
-  }catch(e){}
+async function fetchYahoo(ticker){
+  const y = ticker + '.SA';
+  const proxies = ['https://api.allorigins.win/raw?url=','https://corsproxy.io/?'];
+  for(const p of proxies){
+    try{
+      const res = await fetchWithTimeout(p + encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${y}`), 7000);
+      if(!res.ok) continue;
+      const j = await res.json();
+      const price = j?.chart?.result?.[0]?.meta?.regularMarketPrice;
+      if(price && isFinite(price)) return {price: Number(price), source: 'yahoo'};
+    }catch{}
+  }
+  throw new Error('yahoo fail');
 }
-function notifyCheck(){if(localStorage.getItem('barsi-notify')!=='1')return;if(!('Notification'in window)||Notification.permission!=='granted')return;TICKERS.forEach(t=>{const d=getData(t);const c=calc(d.price,d.dividend);const key='alert-'+t;const last=localStorage.getItem(key);const now=c.status;if((c.noPadrao||c.melhor||d.price<c.teto*0.9) && last!==now){try{playBeep();new Notification(`${t} — ${c.status}`,{body:`Preço ${fmtBRL(d.price)} | Teto ${fmtBRL(c.teto)} | DY ${fmtPct(c.dy)}`,tag:'barsi-'+t});localStorage.setItem(key,now);}catch{}}});}
-
-document.addEventListener('click',async e=>{const eb=e.target.closest('[data-edit]');if(eb){const card=eb.closest('.card');const t=card.dataset.ticker;const type=eb.dataset.edit;const cur=getData(t);const valStr=type==='price'?cur.price.toFixed(2).replace('.',','):cur.dividend.toFixed(2).replace('.',',');const ans=prompt(type==='price'?`Preço manual para ${t}`:`Dividendo 12m manual para ${t}`,valStr);if(ans===null)return;const num=parseFloat(ans.replace(/\./g,'').replace(',','.'));if(!isFinite(num))return alert('Valor inválido');state.tickers[t]=state.tickers[t]||{};if(type==='price')state.tickers[t].manualPrice=num;else state.tickers[t].manualDividend=num;saveState();render();notifyCheck();}const rb=e.target.closest('[data-reset]');if(rb){const t=rb.dataset.reset;if(state.tickers[t]){delete state.tickers[t].manualPrice;delete state.tickers[t].manualDividend;}saveState();render();}const rf=e.target.closest('[data-refresh]');if(rf){rf.disabled=true;rf.textContent='...';await updateAll();}});
+async function fetchStooq(ticker){
+  try{
+    const code = ticker.toLowerCase() + '.sa';
+    const res = await fetchWithTimeout(`https://stooq.com/q/l/?s=${code}&f=sd2t2ohlcv&h&e=csv`, 6000);
+    const txt = await res.text();
+    const line = txt.trim().split('\n')[1];
+    if(line){
+      const close = parseFloat(line.split(',')[6]);
+      if(isFinite(close)) return {price: close, source: 'stooq'};
+    }
+  }catch{}
+  throw new Error('stooq fail');
+}
+async function fetchB3Api(ticker){
+  try{
+    const res = await fetchWithTimeout(`https://b3api.vercel.app/api/Assets/${ticker}`, 6000);
+    if(!res.ok) throw new Error();
+    const j = await res.json();
+    const price = j?.price?? j?.currentPrice?? null;
+    if(price && isFinite(price)) return {price: Number(price), source: 'b3api'};
+  }catch{}
+  throw new Error('b3api fail');
+}
+async function fetchBrasilAPI(ticker){
+  try{
+    const res = await fetchWithTimeout(`https://brasilapi.com.br/api/quote/v1/${ticker}`, 6000);
+    if(!res.ok) throw new Error();
+    const j = await res.json();
+    const price = j.regularMarketPrice?? j.price?? null;
+    if(price && isFinite(price)) return {price: Number(price), source: 'brasilapi'};
+  }catch{}
+  throw new Error('brasilapi fail');
+}
+async function getPrice(ticker){
+  const chain = [fetchYahoo, fetchStooq, fetchB3Api, fetchBrasilAPI];
+  for(const fn of chain){
+    try{
+      const r = await fn(ticker);
+      if(r && r.price) return r;
+    }catch{}
+  }
+  return null;
+}
+async function updateAll(){
+  const btn=document.getElementById('updateBtn');
+  btn.disabled=true; btn.textContent='Atualizando…';
+  const results = await Promise.allSettled(TICKERS.map(t => getPrice(t)));
+  let ok = 0;
+  results.forEach((r,i)=>{
+    if(r.status==='fulfilled' && r.value && r.value.price){
+      const t = TICKERS[i];
+      const prev = state.tickers[t] || {};
+      const dividend = prev.dividend?? prev.manualDividend?? DEFAULTS[t].dividend;
+      state.tickers[t] = {...prev, price: r.value.price, dividend, source: r.value.source, updatedAt: Date.now()};
+      ok++;
+    }
+  });
+  if(ok>0){ state.lastFetch=Date.now(); state.lastSource='multi'; }
+  saveState(); render();
+  btn.disabled=false; btn.textContent='Atualizar Agora';
+  if(ok>0) notifyCheck();
+}
+function notifyCheck(){if(localStorage.getItem('barsi-notify')!=='1')return;if(!('Notification'in window)||Notification.permission!=='granted')return;TICKERS.forEach(t=>{const d=getData(t);const c=calc(d.price,d.dividend);if(c.noPadrao||c.melhor||d.price<c.teto*0.9){try{new Notification(`${t} — ${c.status}`,{body:`Preço ${fmtBRL(d.price)} | Teto ${fmtBRL(c.teto)} | DY ${fmtPct(c.dy)}`,tag:'barsi-'+t});}catch{}}});}
+document.addEventListener('click',async e=>{const eb=e.target.closest('[data-edit]');if(eb){const card=eb.closest('.card');const t=card.dataset.ticker;const type=eb.dataset.edit;const cur=getData(t);const valStr=type==='price'?cur.price.toFixed(2).replace('.',','):cur.dividend.toFixed(2).replace('.',',');const ans=prompt(type==='price'?`Preço manual para ${t}`:`Dividendo 12m manual para ${t}`,valStr);if(ans===null)return;const num=parseFloat(ans.replace(/\./g,'').replace(',','.'));if(!isFinite(num))return alert('Valor inválido');state.tickers[t]=state.tickers[t]||{};if(type==='price')state.tickers[t].manualPrice=num;else state.tickers[t].manualDividend=num;saveState();render();}const rb=e.target.closest('[data-reset]');if(rb){const t=rb.dataset.reset;if(state.tickers[t]){delete state.tickers[t].manualPrice;delete state.tickers[t].manualDividend;}saveState();render();}const rf=e.target.closest('[data-refresh]');if(rf){rf.disabled=true;rf.textContent='...';await updateAll();}});
 document.getElementById('updateBtn').onclick=()=>updateAll();
 document.getElementById('clearBtn').onclick=()=>{if(confirm('Limpar cache local?')){localStorage.removeItem(STORAGE_KEY);location.reload();}};
 document.getElementById('notifyBtn').onclick=async()=>{if(!('Notification'in window))return alert('Sem suporte.');const p=await Notification.requestPermission();if(p==='granted'){localStorage.setItem('barsi-notify','1');render();}else{localStorage.removeItem('barsi-notify');}};
@@ -152,5 +228,5 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js'));
 }
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;var productId=extractProductId(target)||extractProductId(a);if(!productId)return;e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*")},true)})();</script></body>
 </html>
